@@ -60,10 +60,11 @@ def load_image_file(file, mode='RGB', size=None):
 
 def read_dataset(loc, aug=False, input_shape=(224, 224)):
     image, label = [], []
+    global num_instance
     for folders in glob.glob(loc):
-        print(f"Loading {folders}:")
-        for f in tqdm(os.listdir(folders)):
-            print(f"\rLoading data: {os.path.join(folders,f)}", end="")
+        #print(f"Loading {folders}:")
+        for f in (os.listdir(folders)):
+            #print(f"\rLoading data: {os.path.join(folders,f)}", end="")
             if os.path.basename(folders)=="multi":
                 # ml
                 img_label = mlEncoder(f)
@@ -82,4 +83,12 @@ def read_dataset(loc, aug=False, input_shape=(224, 224)):
     y = np.array(label, dtype=np.float16)
     print("Instances: ")
     print(num_instance)
+    
+    
+    num_instance={"black":0,
+              "mg":0,
+              "moth":0,
+              "oil":0,
+              "healthy":0,
+              "background":0}
     return x, y

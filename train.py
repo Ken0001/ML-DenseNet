@@ -3,57 +3,48 @@
     Traning model on our Pomelo dataset
     Support single-label and multi-label
 """
-import click
+from argparse import ArgumentParser
+import read_data as rd
 import os
+from sklearn.model_selection import train_test_split
 
-@click.command()
-@click.option('-d', '--dataset', "dataset", help='Dataset', required=True)
-@click.option('-m', '--model', "model", help='Model', required=True)
-@click.option('-e', '--epoch', "epoch", help='Epoch', required=True, type=int)
-@click.option('-b', '--bs', "bs", help='Batch size', required=True, type=int)
+parser = ArgumentParser()
+parser.add_argument("-d", "--dataset", help="Dataset", dest="dataset", default="none")
+parser.add_argument("-m", "--model", help="Model", dest="model", default="none")
+parser.add_argument("-e", "--epoch", help="Epoch", dest="epoch", type=int, default="90")
+parser.add_argument("-b", "--batch_size", help="Batch size", dest="batch_size", type=int, default="16")
+args = parser.parse_args()
+print("|-------------Training info-------------")
+print("|-Dataset:   ", args.dataset)
+print("|-Model:     ", args.model)
+print("|-Epoch:     ", args.epoch)
+print("|-Batch_size:", args.batch_size)
 
-def init(dataset, model, epoch, bs):
-    print("Train.py")
-    print(f'Dataset     => {dataset or "None"}')
-    print(f'Model       => {model or "None"}')
-    print(f'Epoch       => {epoch or "None"}')
-    print(f'Batch size  => {bs or "None"}')
-
-    print("H")
-    loc = dataset + "/train"
-    category = os.listdir(loc)
-    print("Category:", category)
-    # a(dataset)
-    # b(dataset)
-    # c(dataset)
-    # d(model, dataset)
-
-
-def a(dataset):
-    print("T", dataset)
-
-def b(dataset):
-    print("T", dataset)
-
-def c(model):
-    return 0
-
-def d(model, dataset):
-    print("T", dataset)
-    return 0
-
-
-if __name__ == '__main__':
-    init()
-    print("A")
-    a()
-### Prepare data
-
+path = args.dataset
+ml = False
+activation = "softmax"
+loss = "categorical_crossentropy"
 # Check single-label or multi-label
+if "multi" in os.listdir(path+"/train"):
+    ml = True
+    activation = "sigmoid"
+    loss = "binary_crossentropy"
+
+print("|-Activation:", activation)
+print("|-Loss:      ", loss)
+print("|---------------------------------------")
 # Read data
+print("Loading training data")
+x_train, y_train = rd.read_dataset(path+"/train/*")
+print("Loading testing data")
+x_test, y_test = rd.read_dataset(path+"/test/*")
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.2, shuffle= True)
 
 
-
+print("Train:", x_train.shape, y_train.shape)
+print("Val:", x_val.shape, y_val.shape)
+print("Test:", x_test.shape, y_test.shape)
+print("Done!")
 
 ### Prepare model
 
