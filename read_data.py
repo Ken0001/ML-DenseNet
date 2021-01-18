@@ -3,6 +3,7 @@ from PIL import Image, ImageFile, ImageOps
 import numpy as np
 from tqdm import tqdm
 
+# Read data in 5 classes
 # Number of instances
 num_instance={"black":0,
               "mg":0,
