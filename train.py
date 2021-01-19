@@ -39,7 +39,8 @@ if "multi" in os.listdir(path+"/train"):
 print("|-Activation:", activation)
 print("|-Loss:      ", loss)
 print("|---------------------------------------")
-# Read data
+
+### Read data
 print("> Loading training data")
 x_train, y_train = rd.read_dataset(path+"/train/*")
 print("> Loading testing data")
@@ -65,8 +66,7 @@ model.compile(loss=loss,
               metrics=["binary_accuracy", "categorical_accuracy"])
 # metrics=["accuracy"]              
 
-
-#model.summary()
+# model.summary()
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=10, mode='auto', cooldown=3, min_lr=0.00001)
 
@@ -95,6 +95,7 @@ train_history = model.fit(x_train, y_train,
 
 
 model.save("./model/ml_densenet.h5")
+
 ### Evaluate training result
 
 scores = model.evaluate(x_test, y_test, verbose=0)
