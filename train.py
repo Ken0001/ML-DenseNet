@@ -14,17 +14,13 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, LearningRateScheduler
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, precision_score, recall_score
 
+### Get argument
 parser = ArgumentParser()
-parser.add_argument("-d", "--dataset", help="Dataset", dest="dataset", default="none")
-parser.add_argument("-m", "--model", help="Model", dest="model", default="none")
+parser.add_argument("-d", "--dataset", help="Dataset path", dest="dataset", default="None")
+parser.add_argument("-m", "--model", help="ML-DenseNet type (0~5)", dest="model", type=int, default="0")
 parser.add_argument("-e", "--epoch", help="Epoch", dest="epoch", type=int, default="90")
 parser.add_argument("-b", "--batch_size", help="Batch size", dest="batch_size", type=int, default="16")
 args = parser.parse_args()
-print("|-------------Training info-------------")
-print("|-Dataset:   ", args.dataset)
-print("|-Model:     ", args.model)
-print("|-Epoch:     ", args.epoch)
-print("|-Batch_size:", args.batch_size)
 
 path = args.dataset
 ml = False
@@ -36,6 +32,11 @@ if "multi" in os.listdir(path+"/train"):
     activation = "sigmoid"
     loss = "binary_crossentropy"
 
+print("|-------------Training info-------------")
+print("|-Dataset:   ", args.dataset)
+print("|-Model:     ", args.model)
+print("|-Epoch:     ", args.epoch)
+print("|-Batch_size:", args.batch_size)
 print("|-Activation:", activation)
 print("|-Loss:      ", loss)
 print("|---------------------------------------")
@@ -57,16 +58,15 @@ print("Done!")
 img_shape = (224, 224, 3)
 num_class = 5
 
-model = mldensenet(img_shape, num_class, mltype=3, finalAct=activation)
+model = mldensenet(img_shape, num_class, mltype=args.model, finalAct=activation)
 
 opt = SGD(lr=0.01, decay=0.0001, momentum=0.9, nesterov=True)
 
 model.compile(loss=loss,
               optimizer=opt,
               metrics=["binary_accuracy", "categorical_accuracy"])
-# metrics=["accuracy"]              
 
-# model.summary()
+
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=10, mode='auto', cooldown=3, min_lr=0.00001)
 
@@ -84,7 +84,6 @@ callbacks = [
 ]
 
 ### Training model
-
 train_history = model.fit(x_train, y_train,
           batch_size=args.batch_size,
           epochs=args.epoch,
@@ -97,18 +96,18 @@ train_history = model.fit(x_train, y_train,
 model.save("./model/ml_densenet.h5")
 
 ### Evaluate training result
-
 scores = model.evaluate(x_test, y_test, verbose=0)
 print('\nTesting result:')
 print('Test loss:', scores[0])
 print('Test accuracy:', scores[1])
+
+### Plot training curve
 acc = train_history.history['categorical_accuracy']
 val_acc = train_history.history['val_categorical_accuracy']
 loss = train_history.history['loss']
 val_loss = train_history.history['val_loss']
 p_epochs = range(1, len(acc) + 1)
 
-#Train and validation accuracy
 plt.plot(p_epochs, acc, 'b', label='Training accurarcy')
 plt.plot(p_epochs, val_acc, 'g', label='Validation accurarcy')
 plt.plot(p_epochs, loss, 'r', label='Training loss')
