@@ -114,7 +114,7 @@ def ML_DenseNet(img_shape, classes, mltype):
     model = DenseNet(img_shape, classes, act='softmax')
     outputs = []
     if mltype==0:
-        end = model.layer[-1].output
+        end = model.layers[-1].output
         x = tf.keras.layers.Dense(classes, activation=act,name='predictions')(end)
         model = tf.keras.models.Model(model.input, x)
         return model
