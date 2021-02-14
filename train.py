@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 import read_data as rd
 import os
 from sklearn.model_selection import train_test_split
-from ML_DenseNet import mldensenet
+from ML_DenseNet_Pretrain import ML_DenseNet
 
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ReduceLROnPlateau, LearningRateScheduler
@@ -58,7 +58,7 @@ print("Done!")
 img_shape = (224, 224, 3)
 num_class = 5
 
-model = mldensenet(img_shape, num_class, mltype=args.model, finalAct=activation)
+model = ML_DenseNet(img_shape, num_class, mltype=args.model)
 
 opt = SGD(lr=0.01, decay=0.0001, momentum=0.9, nesterov=True)
 
