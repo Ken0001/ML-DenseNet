@@ -115,7 +115,7 @@ def ML_DenseNet(img_shape, classes, mltype):
     outputs = []
     if mltype==0:
         end = model.layers[-1].output
-        x = tf.keras.layers.Dense(classes, activation=act,name='predictions')(end)
+        x = tf.keras.layers.Dense(classes, activation='softmax',name='predictions')(end)
         model = tf.keras.models.Model(model.input, x)
         return model
     elif mltype==1:
