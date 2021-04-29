@@ -30,9 +30,9 @@ def mldensenet(input_shape, n_classes, mltype=0, finalAct='softmax', f=32):
         1x1x(input/2) conv + 2x2 pooling
     """
     def transition_layer(x):
-        x = Conv2D(K.int_shape(x)[-1]//2, (1,1), strides=1, padding='same')(x)
         x = BatchNormalization(epsilon=1.001e-5)(x)
         x = ReLU()(x)
+        x = Conv2D(K.int_shape(x)[-1]//2, (1,1), strides=1, padding='same')(x)
         x = AveragePooling2D(2, strides=2)(x)
         return x
 
